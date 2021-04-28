@@ -30,8 +30,8 @@ Object.keys(db).forEach(modelName => {
     db[modelName].associate(db);
   }
 });
-
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+// manually extend our 'db' object to add all of the Sequelize and database properties:
+db.sequelize = sequelize; // Adds any new model to the 'db' object
+db.Sequelize = Sequelize; // Adds in the entire Sequelize module
 
 module.exports = db;
