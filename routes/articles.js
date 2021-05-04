@@ -1,21 +1,27 @@
 const express = require('express');
 const router = express.Router();
+const Article = require('../models').Article;   // this is set up in models/index using the
+                                                // fs trickery in there.
 
 /* Handler function to wrap each route. */
+// You'll remember this from the unit8/ course material: it saves writing the same
+// boilerplate try-catch code for every route.
 function asyncHandler(cb){
   return async(req, res, next) => {
     try {
       await cb(req, res, next)
     } catch(error){
       // Forward error to the global error handler
-      next(error);
+      res.status(500).send(error);
     }
   }
 }
 
 /* GET articles listing. */
 router.get('/', asyncHandler(async (req, res) => {
-  res.render("articles/index", { articles: {}, title: "Sequelize-It!" });
+  const narticles = await Article.findAll({order: [["createdAt","DESC"]]});
+  console.log(narticles);
+  res.render("articles/index", {  articles: narticles , title: "Sequelize-It!" });
 }));
 
 /* Create a new article form. */
@@ -25,7 +31,11 @@ router.get('/new', (req, res) => {
 
 /* POST create article. */
 router.post('/', asyncHandler(async (req, res) => {
-  res.redirect("/articles/");
+  // console.log(req.body); // this comes via bodyParser from the form posted and shows
+  //                        // you an Article object
+  const article = await Article.create(req.body);// you could build this longhand using
+                                                // req.body.title, .author. , .body
+  res.redirect("/articles/" + article.id); // Sequelize auto-generates an id, remember
 }));
 
 /* Edit article form. */
@@ -35,7 +45,8 @@ router.get("/:id/edit", asyncHandler(async(req, res) => {
 
 /* GET individual article. */
 router.get("/:id", asyncHandler(async (req, res) => {
-  res.render("articles/show", { article: {}, title: "Article Title" }); 
+  const article = await Article.findByPk(req.params.id);
+  res.render("articles/show", { article: article, title: article.title }); 
 }));
 
 /* Update an article. */
