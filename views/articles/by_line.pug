@@ -1,4 +1,6 @@
 p.by-line
   = article.author
   |  | 
-  = article.createdAt
+  = article.publishedAt()
+  |  | 
+  = article.veryShortDescription()
