@@ -11,3 +11,9 @@ VERSION HELL
 The original version of sqlite fae package.json is "sqlite3": "^4.2.0". I tried updating
 this to 5.0.0 to get it to run. This worked so far.
 
+FURTHER POSSIBLE USEFUL INFO
+----------------------------
+
+The Sequelize.org notes are useful.
+You can add Where queries.
+You can add pagination using "limit" and "offset" query parameters
