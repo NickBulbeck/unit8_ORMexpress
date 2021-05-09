@@ -32,9 +32,21 @@ router.get('/new', (req, res) => {
 router.post('/', asyncHandler(async (req, res) => {
   // console.log(req.body); // this comes via bodyParser from the form posted and shows
   //                        // you an Article object
-  const article = await Article.create(req.body);// you could build this longhand using
-                                                // req.body.title, .author. , .body
-  res.redirect("/articles/" + article.id); // Sequelize auto-generates an id, remember
+  let article;
+  try {
+    article = await Article.create(req.body);
+    // you could build this longhand using req.body.title, .author. , .body
+    res.redirect("/articles/" + article.id); // Sequelize auto-generates an id, remember
+  } catch (error) {
+    if (error.name === "SequelizeValidationError") {
+      // Article.build doesn't save it like Article.create does
+      article = await Article.build(req.body);
+      res.render("articles/new", {article:article,errors:error.errors, title:"New Article"})
+    } else {
+      throw error; // This will be caught in the asyncHandler's catch block
+    }
+  }
+  
 }));
 
 /* Edit article form. */

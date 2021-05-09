@@ -23,7 +23,14 @@ module.exports = (sequelize) => {
 // and finally, that one's in by_line again
     }
     Article.init({
-        title: Sequelize.STRING,
+        title: {
+            type: Sequelize.STRING,
+            validate: {
+                notEmpty: {
+                    msg: '"Title" is required'
+                }
+            }
+        },
         author: Sequelize.STRING,
         body: Sequelize.TEXT
     }, {sequelize});
